@@ -1,0 +1,31 @@
+version: '3.6'
+services:
+  db-postgres:
+    image: postgres:15.4-bullseye
+    environment:
+      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: admin
+      POSTGRES_DB: test
+      PGDATA: /data/postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - pgsqldata:/data/postgres
+      - ./db:/docker-entrypoint-initdb.d
+    restart: unless-stopped
+  pgadmin:
+    image: dpage/pgadmin4:7.6
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin@pgadmin.org
+      PGADMIN_DEFAULT_PASSWORD: pgadmin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+       - pgadmin:/root/.pgadmin
+    ports:
+      - 3000:80
+    depends_on:
+      - db-postgres
+    restart: unless-stopped
+volumes:
+  pgsqldata:
+  pgadmin:
